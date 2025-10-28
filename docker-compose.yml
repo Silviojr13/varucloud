@@ -1,0 +1,77 @@
+version: '3.9'
+
+services:
+  # ---------- MICROSERVIÇOS ----------
+  usuarios:
+    build: ./microservices/usuarios
+    container_name: varu_usuarios
+    ports:
+      - "3002:3002"
+    env_file:
+      - ./microservices/usuarios/.env
+    networks:
+      - varu_network
+    restart: always
+
+  inventario:
+    build: ./microservices/inventario
+    container_name: varu_inventario
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./microservices/inventario/.env
+    networks:
+      - varu_network
+    restart: always
+
+  pedidos:
+    build: ./microservices/pedidos
+    container_name: varu_pedidos
+    ports:
+      - "3003:3003"
+    networks:
+      - varu_network
+    restart: always
+
+  # ---------- BFF ----------
+  bff:
+    build: ./bff
+    container_name: varu_bff
+    ports:
+      - "3000:3000"
+    depends_on:
+      - usuarios
+      - inventario
+      - pedidos
+      - functions
+    env_file:
+      - ./bff/.env
+    networks:
+      - varu_network
+    restart: always
+
+  # ---------- FUNCTIONS ----------
+  functions:
+    build: ./functions
+    container_name: varu_functions
+    ports:
+      - "4000:4000"
+    networks:
+      - varu_network
+    restart: always
+
+  # ---------- FRONTEND ----------
+  frontend:
+    build: ./frontend
+    container_name: varu_frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - bff
+    networks:
+      - varu_network
+    restart: always
+
+networks:
+  varu_network:
+    driver: bridge

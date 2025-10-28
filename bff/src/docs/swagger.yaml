@@ -1,0 +1,49 @@
+openapi: 3.0.0
+info:
+  title: API BFF - VARU
+  version: 1.0.0
+  description: API Gateway dos microserviços (Inventário, Usuários e Pedidos)
+
+servers:
+  - url: http://192.168.0.104:8080
+    description: Servidor BFF
+
+paths:
+  /inventario:
+    get:
+      summary: Retorna itens do inventário
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: "📦 Microserviço de Inventário ativo!"
+  
+  /usuarios:
+    get:
+      summary: Retorna lista de usuários
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: "👤 Microserviço de Usuários ativo!"
+
+  /pedidos:
+    get:
+      summary: Retorna pedidos
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: "🧾 Microserviço de Pedidos ativo!"
