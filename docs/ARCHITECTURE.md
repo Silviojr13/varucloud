@@ -1,57 +1,57 @@
-# System Architecture
+# Arquitetura do Sistema
 
-## Overview
+## Visão Geral
 
-The VARU system follows Clean Architecture principles combined with Vertical Slice Architecture to ensure maintainability, testability, and scalability. This approach separates concerns and organizes code by business features rather than technical layers.
+O sistema VARU segue os princípios da Arquitetura Limpa combinada com a Arquitetura de Fatia Vertical para garantir manutenibilidade, testabilidade e escalabilidade. Esta abordagem separa as preocupações e organiza o código por recursos de negócio em vez de camadas técnicas.
 
-## Clean Architecture
+## Arquitetura Limpa
 
-### Principles
+### Princípios
 
-1. **Separation of Concerns:** Business logic is separated from infrastructure concerns
-2. **Dependency Rule:** Dependencies point inward, toward higher-level policies
-3. **Testability:** Business rules can be tested without UI, database, web server, or any other external element
-4. **Independence:** Business rules are independent of the UI, database, framework, and external agencies
+1. **Separação de Preocupações:** A lógica de negócio é separada das preocupações de infraestrutura
+2. **Regra de Dependência:** As dependências apontam para dentro, em direção às políticas de nível superior
+3. **Testabilidade:** As regras de negócio podem ser testadas sem UI, banco de dados, servidor web ou qualquer outro elemento externo
+4. **Independência:** As regras de negócio são independentes da UI, banco de dados, framework e agências externas
 
-### Layers
+### Camadas
 
-1. **Domain Layer:** Contains business entities and rules
-2. **Application Layer:** Contains use cases and application services
-3. **Infrastructure Layer:** Contains implementations of external services (databases, APIs, etc.)
-4. **Presentation Layer:** Contains UI and API controllers
+1. **Camada de Domínio:** Entidades e regras de negócio
+2. **Camada de Aplicação:** Casos de uso e serviços de aplicação
+3. **Camada de Infraestrutura:** Implementações de serviços externos (bancos de dados, APIs, etc.)
+4. **Camada de Apresentação:** Controladores de UI e API
 
-### Dependency Flow
+### Fluxo de Dependência
 
 ```
-Presentation → Application → Domain
+Apresentação → Aplicação → Domínio
      ↓              ↓          ↑
-Infrastructure ← ← ← ← ← ← ← ←
+Infraestrutura ← ← ← ← ← ← ← ←
 ```
 
-## Vertical Slice Architecture
+## Arquitetura de Fatia Vertical
 
-### Principles
+### Princípios
 
-1. **Feature-Based Organization:** Code is organized by business features rather than technical layers
-2. **Cohesion:** Related functionality is grouped together
-3. **Reduced Coupling:** Features are loosely coupled with minimal dependencies between them
-4. **Scalability:** Easy to add new features without affecting existing ones
+1. **Organização Baseada em Recursos:** O código é organizado por recursos de negócio em vez de camadas técnicas
+2. **Coesão:** A funcionalidade relacionada é agrupada junta
+3. **Acoplamento Reduzido:** Os recursos são acoplados de forma flexível com dependências mínimas entre eles
+4. **Escalabilidade:** Fácil adicionar novos recursos sem afetar os existentes
 
-### Structure
+### Estrutura
 
-Each feature is organized in its own directory with the following structure:
+Cada recurso é organizado em seu próprio diretório com a seguinte estrutura:
 
 ```
 src/
 └── features/
-    └── feature-name/
+    └── nome-do-recurso/
         ├── controllers/
         ├── models/
         ├── services/
         └── validators/
 ```
 
-### Example: Inventory Feature
+### Exemplo: Recurso de Inventário
 
 ```
 src/
@@ -67,35 +67,35 @@ src/
             └── itemValidator.js
 ```
 
-## Microservices Architecture
+## Arquitetura de Microserviços
 
-### Services
+### Serviços
 
-1. **Inventory Service:** Manages product inventory and stock levels
-2. **Users Service:** Manages user accounts and authentication
-3. **Orders Service:** Manages customer orders and processing
-4. **BFF (Backend for Frontend):** Aggregates APIs for the frontend
-5. **Functions:** Serverless functions for event processing
+1. **Serviço de Inventário:** Gerencia o estoque de produtos e níveis de estoque
+2. **Serviço de Usuários:** Gerencia contas de usuários e autenticação
+3. **Serviço de Pedidos:** Gerencia pedidos de clientes e processamento
+4. **BFF (Backend para Frontend):** Agrega APIs para o frontend
+5. **Funções:** Funções serverless para processamento de eventos
 
-### Communication
+### Comunicação
 
-Services communicate through:
-1. **REST APIs:** For synchronous communication
-2. **Message Broker:** For asynchronous event-driven communication
-3. **Shared Database:** For some common data (when appropriate)
+Os serviços se comunicam através de:
+1. **APIs REST:** Para comunicação síncrona
+2. **Message Broker:** Para comunicação orientada a eventos assíncrona
+3. **Banco de Dados Compartilhado:** Para alguns dados comuns (quando apropriado)
 
-## Data Flow
+## Fluxo de Dados
 
-### Request Processing
+### Processamento de Requisições
 
-1. **Presentation Layer:** Receives HTTP request
-2. **Controller:** Validates input and delegates to service
-3. **Service:** Implements business logic and interacts with domain
-4. **Domain:** Contains business rules and entities
-5. **Infrastructure:** Handles data persistence and external services
-6. **Response:** Returns result through presentation layer
+1. **Camada de Apresentação:** Recebe a requisição HTTP
+2. **Controlador:** Valida a entrada e delega para o serviço
+3. **Serviço:** Implementa a lógica de negócio e interage com o domínio
+4. **Domínio:** Contém as regras de negócio e entidades
+5. **Infraestrutura:** Lida com persistência de dados e serviços externos
+6. **Resposta:** Retorna o resultado através da camada de apresentação
 
-### Example: Creating an Inventory Item
+### Exemplo: Criando um Item de Inventário
 
 ```
 1. HTTP POST /inventario
@@ -103,71 +103,71 @@ Services communicate through:
 3. ItemService.createItem()
 4. Item.validate()
 5. ItemRepository.save()
-6. Return created item
+6. Retorna o item criado
 ```
 
-## Technology Stack
+## Stack de Tecnologia
 
 ### Backend
 
 - **Runtime:** Node.js
 - **Framework:** Express.js
-- **Database:** 
-  - MongoDB Atlas (NoSQL for inventory)
-  - SQL Server (Azure) (Relational for users/orders)
-- **ORM:** Prisma (for SQL database)
-- **Validation:** Zod
+- **Banco de Dados:** 
+  - MongoDB Atlas (NoSQL para inventário)
+  - SQL Server (Azure) (Relacional para usuários/pedidos)
+- **ORM:** Prisma (para banco de dados SQL)
+- **Validação:** Zod
 - **Message Broker:** RabbitMQ
-- **Containerization:** Docker
-- **Orchestration:** Docker Compose
+- **Contêinerização:** Docker
+- **Orquestração:** Docker Compose
 
 ### Frontend
 
-- **Framework:** React/Vue.js (to be implemented)
-- **State Management:** Redux/Vuex (to be implemented)
-- **Build Tool:** Vite/Webpack (to be implemented)
+- **Framework:** React/Vue.js (a ser implementado)
+- **Gerenciamento de Estado:** Redux/Vuex (a ser implementado)
+- **Ferramenta de Build:** Vite/Webpack (a ser implementado)
 
-### Cloud Services
+### Serviços em Nuvem
 
-- **Database:** Azure SQL Database, MongoDB Atlas
+- **Banco de Dados:** Azure SQL Database, MongoDB Atlas
 - **Serverless:** Azure Functions
-- **Messaging:** RabbitMQ
-- **Container Registry:** Azure Container Registry (to be implemented)
-- **Deployment:** Azure App Service (to be implemented)
+- **Mensageria:** RabbitMQ
+- **Registro de Contêineres:** Azure Container Registry (a ser implementado)
+- **Implantação:** Azure App Service (a ser implementado)
 
-## Testing Strategy
+## Estratégia de Testes
 
-### Unit Tests
+### Testes Unitários
 
-- Test business logic in isolation
-- Mock external dependencies
-- High code coverage for critical paths
+- Testa a lógica de negócio em isolamento
+- Mocka dependências externas
+- Alta cobertura de código para caminhos críticos
 
-### Integration Tests
+### Testes de Integração
 
-- Test service interactions
-- Test database operations
-- Test API endpoints
+- Testa interações entre serviços
+- Testa operações de banco de dados
+- Testa endpoints da API
 
-### Architectural Tests
+### Testes Arquiteturais
 
-- Verify Clean Architecture compliance
-- Ensure proper layer separation
-- Validate dependency flow
+- Verifica a conformidade com a Arquitetura Limpa
+- Garante a separação adequada de camadas
+- Valida o fluxo de dependências
 
-## Deployment
+## Implantação
 
-### CI/CD Pipeline
+### Pipeline CI/CD
 
-1. **Build:** Compile and package services
-2. **Test:** Run automated tests
-3. **Deploy:** Deploy to staging environment
-4. **Validate:** Run integration tests
-5. **Release:** Deploy to production
+1. **Build:** Compila e empacota os serviços
+2. **Teste:** Executa testes automatizados
+3. **Implantação:** Implanta no ambiente de staging
+4. **Validação:** Executa testes de integração
+5. **Lançamento:** Implanta em produção
 
-### Container Orchestration
+### Orquestração de Contêineres
 
-Services are containerized and orchestrated using Docker Compose:
+Os serviços são conteinerizados e orquestrados usando Docker Compose:
 
 ```yaml
 services:
@@ -179,27 +179,27 @@ services:
     build: ./microservices/usuarios
     ports:
       - "3002:3002"
-  # ... other services
+  # ... outros serviços
 ```
 
-## Monitoring and Observability
+## Monitoramento e Observabilidade
 
 ### Logging
 
-Structured logging with consistent formats across all services.
+Logging estruturado com formatos consistentes em todos os serviços.
 
-### Metrics
+### Métricas
 
-Key performance indicators:
-- Response times
-- Error rates
+Indicadores de desempenho chave:
+- Tempos de resposta
+- Taxas de erro
 - Throughput
-- Resource utilization
+- Utilização de recursos
 
 ### Tracing
 
-Distributed tracing for request flow across services.
+Tracing distribuído para fluxo de requisições entre serviços.
 
 ### Health Checks
 
-Each service provides health check endpoints for monitoring.
+Cada serviço fornece endpoints de health check para monitoramento.

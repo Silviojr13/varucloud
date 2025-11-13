@@ -6,7 +6,8 @@
   "scripts": {
     "test": "node --test tests/**/*.test.js"
   },
-  "devDependencies": {
-    "node:test": "^0.1.0"
+  "devDependencies": {},
+  "dependencies": {
+    "amqplib": "^0.10.3"
   }
 }

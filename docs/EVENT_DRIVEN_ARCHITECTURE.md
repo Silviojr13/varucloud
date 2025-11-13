@@ -1,79 +1,79 @@
-# Event-Driven Architecture
+# Arquitetura Orientada a Eventos
 
-## Overview
+## Visão Geral
 
-The VARU system implements an Event-Driven Architecture to enable loose coupling between microservices and facilitate real-time communication. This architecture allows services to react to business events without direct dependencies.
+O sistema VARU implementa uma Arquitetura Orientada a Eventos para permitir o acoplamento flexível entre microserviços e facilitar a comunicação em tempo real. Esta arquitetura permite que os serviços reajam a eventos de negócio sem dependências diretas.
 
-## Event Types
+## Tipos de Eventos
 
-### Core Events
+### Eventos Principais
 
-1. **ProductUpdated** - Triggered when an inventory item is created, updated, or deleted
-2. **StockLow** - Triggered when inventory levels fall below the minimum threshold
-3. **OrderCreated** - Triggered when a new order is placed
-4. **OrderUpdated** - Triggered when an order status changes
-5. **UserRegistered** - Triggered when a new user registers
-6. **SupplierUpdated** - Triggered when supplier information changes
+1. **ProductUpdated** - Disparado quando um item de estoque é criado, atualizado ou deletado
+2. **StockLow** - Disparado quando os níveis de estoque caem abaixo do limiar mínimo
+3. **OrderCreated** - Disparado quando um novo pedido é realizado
+4. **OrderUpdated** - Disparado quando o status de um pedido muda
+5. **UserRegistered** - Disparado quando um novo usuário se registra
+6. **SupplierUpdated** - Disparado quando informações do fornecedor mudam
 
 ## Message Broker
 
-The system uses RabbitMQ as the message broker for event communication between services.
+O sistema usa RabbitMQ como message broker para comunicação de eventos entre serviços.
 
-### RabbitMQ Setup
+### Configuração do RabbitMQ
 
-1. Install RabbitMQ server
-2. Configure exchanges and queues for each event type
-3. Set up appropriate routing keys
-4. Configure security and access controls
+1. Instale o servidor RabbitMQ
+2. Configure exchanges e filas para cada tipo de evento
+3. Configure chaves de roteamento apropriadas
+4. Configure segurança e controles de acesso
 
-### Exchange Configuration
+### Configuração do Exchange
 
 ```
 Exchange: varu.events
 Type: topic
 ```
 
-### Queue Configuration
+### Configuração das Filas
 
-1. **inventory.events** - For inventory-related events
-2. **orders.events** - For order-related events
-3. **users.events** - For user-related events
-4. **notifications.events** - For notification events
+1. **inventory.events** - Para eventos relacionados ao estoque
+2. **orders.events** - Para eventos relacionados a pedidos
+3. **users.events** - Para eventos relacionados a usuários
+4. **notifications.events** - Para eventos de notificação
 
-## Event Flow
+## Fluxo de Eventos
 
-### Product Updated Flow
+### Fluxo de Atualização de Produto
 
-1. User updates a product in the inventory service
-2. Inventory service publishes a `ProductUpdated` event to RabbitMQ
-3. Orders service receives the event and updates related orders if needed
-4. Notification service receives the event and sends alerts if configured
+1. Usuário atualiza um produto no serviço de estoque
+2. Serviço de estoque publica um evento `ProductUpdated` no RabbitMQ
+3. Serviço de pedidos recebe o evento e atualiza pedidos relacionados se necessário
+4. Serviço de notificação recebe o evento e envia alertas se configurado
 
-### Low Stock Alert Flow
+### Fluxo de Alerta de Estoque Baixo
 
-1. Inventory service detects stock levels below threshold
-2. Inventory service publishes a `StockLow` event to RabbitMQ
-3. Notification service receives the event and sends alerts
-4. Azure Function triggers to process automated replenishment
+1. Serviço de estoque detecta níveis de estoque abaixo do limiar
+2. Serviço de estoque publica um evento `StockLow` no RabbitMQ
+3. Serviço de notificação recebe o evento e envia alertas
+4. Função Azure é disparada para processar reposição automatizada
 
-### Order Creation Flow
+### Fluxo de Criação de Pedido
 
-1. User places a new order in the orders service
-2. Orders service publishes an `OrderCreated` event to RabbitMQ
-3. Inventory service receives the event and updates stock levels
-4. Notification service receives the event and sends confirmation to user
+1. Usuário realiza um novo pedido no serviço de pedidos
+2. Serviço de pedidos publica um evento `OrderCreated` no RabbitMQ
+3. Serviço de estoque recebe o evento e atualiza os níveis de estoque
+4. Serviço de notificação recebe o evento e envia confirmação ao usuário
 
-## Implementation Example
+## Implementação de Exemplo
 
-### Publishing an Event
+### Publicando um Evento
 
 ```javascript
-// In inventory service
+// No serviço de estoque
 const event = {
   type: 'ProductUpdated',
   payload: {
     productId: '12345',
-    name: 'Updated Product',
+    name: 'Produto Atualizado',
     sku: 'PROD-123',
     quantity: 100,
     price: 29.99
@@ -84,26 +84,26 @@ const event = {
 await eventPublisher.publish('varu.events', 'inventory.product.updated', event);
 ```
 
-### Consuming an Event
+### Consumindo um Evento
 
 ```javascript
-// In orders service
+// No serviço de pedidos
 eventConsumer.subscribe('varu.events', 'inventory.product.updated', async (event) => {
-  // Update related orders based on product changes
+  // Atualiza pedidos relacionados com base nas mudanças do produto
   await orderService.updateRelatedOrders(event.payload.productId);
 });
 ```
 
-## Error Handling
+## Tratamento de Erros
 
-1. Implement dead letter queues for failed event processing
-2. Add retry mechanisms with exponential backoff
-3. Log all events and processing results for debugging
-4. Monitor event processing metrics
+1. Implemente filas dead letter para processamento de eventos falhos
+2. Adicione mecanismos de retry com backoff exponencial
+3. Registre todos os eventos e resultados de processamento para debugging
+4. Monitore métricas de processamento de eventos
 
-## Monitoring
+## Monitoramento
 
-1. Track event publishing rates
-2. Monitor event processing latency
-3. Alert on event processing failures
-4. Dashboard for event flow visualization
+1. Acompanhe taxas de publicação de eventos
+2. Monitore latência de processamento de eventos
+3. Envie alertas em falhas de processamento de eventos
+4. Dashboard para visualização do fluxo de eventos
