@@ -29,8 +29,8 @@ mongoose
 import routes from './routes.js';
 app.use('/', routes);
 
-// Raiz / status
-app.get('/', (_req, res) => res.json({ message: 'Inventário ativo!' }));
+// Health check endpoint
+app.get('/health', (_req, res) => res.json({ status: 'OK', service: 'inventario', timestamp: new Date() }));
 
 app.listen(PORT, () => {
   console.log(`📦 Inventário rodando na porta ${PORT}`);

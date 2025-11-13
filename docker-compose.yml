@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   # ---------- MICROSERVIÇOS ----------
   usuarios:
@@ -38,7 +36,7 @@ services:
     build: ./bff
     container_name: varu_bff
     ports:
-      - "3000:3000"
+      - "8080:8080"
     depends_on:
       - usuarios
       - inventario

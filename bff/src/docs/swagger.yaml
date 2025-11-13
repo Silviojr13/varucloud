@@ -5,45 +5,337 @@ info:
   description: API Gateway dos microserviços (Inventário, Usuários e Pedidos)
 
 servers:
-  - url: http://192.168.0.104:8080
+  - url: http://localhost:8080
     description: Servidor BFF
 
 paths:
+  # Inventário endpoints
   /inventario:
     get:
-      summary: Retorna itens do inventário
+      summary: Lista todos os itens do inventário
       responses:
         '200':
-          description: Sucesso
+          description: Lista de itens do inventário
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    nome:
+                      type: string
+                    sku:
+                      type: string
+                    quantidade:
+                      type: integer
+                    preco:
+                      type: number
+                    validade:
+                      type: string
+                      format: date-time
+    post:
+      summary: Cria um novo item no inventário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome:
+                  type: string
+                sku:
+                  type: string
+                quantidade:
+                  type: integer
+                preco:
+                  type: number
+                validade:
+                  type: string
+                  format: date-time
+      responses:
+        '201':
+          description: Item criado com sucesso
+  /inventario/{id}:
+    get:
+      summary: Obtém um item do inventário pelo ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Detalhes do item
           content:
             application/json:
               schema:
                 type: object
-                example:
-                  message: "📦 Microserviço de Inventário ativo!"
-  
+                properties:
+                  id:
+                    type: string
+                  nome:
+                    type: string
+                  sku:
+                    type: string
+                  quantidade:
+                    type: integer
+                  preco:
+                    type: number
+                  validade:
+                    type: string
+                    format: date-time
+    put:
+      summary: Atualiza um item do inventário
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome:
+                  type: string
+                sku:
+                  type: string
+                quantidade:
+                  type: integer
+                preco:
+                  type: number
+                validade:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: Item atualizado com sucesso
+    delete:
+      summary: Remove um item do inventário
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Item removido com sucesso
+
+  # Usuários endpoints
   /usuarios:
     get:
-      summary: Retorna lista de usuários
+      summary: Lista todos os usuários
       responses:
         '200':
-          description: Sucesso
+          description: Lista de usuários
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    nome:
+                      type: string
+                    email:
+                      type: string
+                    senha:
+                      type: string
+    post:
+      summary: Cria um novo usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome:
+                  type: string
+                email:
+                  type: string
+                senha:
+                  type: string
+      responses:
+        '201':
+          description: Usuário criado com sucesso
+  /usuarios/{id}:
+    get:
+      summary: Obtém um usuário pelo ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Detalhes do usuário
           content:
             application/json:
               schema:
                 type: object
-                example:
-                  message: "👤 Microserviço de Usuários ativo!"
+                properties:
+                  id:
+                    type: string
+                  nome:
+                    type: string
+                  email:
+                    type: string
+                  senha:
+                    type: string
+    put:
+      summary: Atualiza um usuário
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome:
+                  type: string
+                email:
+                  type: string
+                senha:
+                  type: string
+      responses:
+        '200':
+          description: Usuário atualizado com sucesso
+    delete:
+      summary: Remove um usuário
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usuário removido com sucesso
 
+  # Pedidos endpoints
   /pedidos:
     get:
-      summary: Retorna pedidos
+      summary: Lista todos os pedidos
       responses:
         '200':
-          description: Sucesso
+          description: Lista de pedidos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    customerId:
+                      type: string
+                    items:
+                      type: array
+                    total:
+                      type: number
+                    status:
+                      type: string
+    post:
+      summary: Cria um novo pedido
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customerId:
+                  type: string
+                items:
+                  type: array
+                total:
+                  type: number
+                status:
+                  type: string
+      responses:
+        '201':
+          description: Pedido criado com sucesso
+  /pedidos/{id}:
+    get:
+      summary: Obtém um pedido pelo ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detalhes do pedido
           content:
             application/json:
               schema:
                 type: object
-                example:
-                  message: "🧾 Microserviço de Pedidos ativo!"
+                properties:
+                  id:
+                    type: integer
+                  customerId:
+                    type: string
+                  items:
+                    type: array
+                  total:
+                    type: number
+                  status:
+                    type: string
+    put:
+      summary: Atualiza um pedido
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customerId:
+                  type: string
+                items:
+                  type: array
+                total:
+                  type: number
+                status:
+                  type: string
+      responses:
+        '200':
+          description: Pedido atualizado com sucesso
+    delete:
+      summary: Remove um pedido
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Pedido removido com sucesso
