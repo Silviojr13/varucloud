@@ -1,75 +1,99 @@
 services:
-  # ---------- MICROSERVIÇOS ----------
+  frontend:
+    build: ./frontend
+    container_name: varu_frontend
+    ports:
+      - "5180:5173"
+    depends_on:
+      - bff
+
+  apigateway:
+    build: ./apigateway
+    container_name: varu_gateway
+    ports:
+      - "8080:8080"   # API Gateway público
+    depends_on:
+      - usuarios
+      - inventario
+      - produtos
+      - pedidos
+
+  bff:
+    build: ./bff
+    container_name: varu_bff
+    ports:
+      - "3000:3000"   # Backend For Frontend
+    depends_on:
+      - usuarios
+      - inventario
+      - produtos
+      - pedidos
+
   usuarios:
     build: ./microservices/usuarios
     container_name: varu_usuarios
     ports:
-      - "3002:3002"
-    env_file:
-      - ./microservices/usuarios/.env
-    networks:
-      - varu_network
-    restart: always
+      - "4001:4001"
+    depends_on:
+      - sqlserver
+      - mongo
 
   inventario:
     build: ./microservices/inventario
     container_name: varu_inventario
     ports:
-      - "3001:3001"
-    env_file:
-      - ./microservices/inventario/.env
-    networks:
-      - varu_network
-    restart: always
+      - "4002:4002"
+    depends_on:
+      - sqlserver
+      - mongo
+
+  produtos:
+    build: ./microservices/produtos
+    container_name: varu_produtos
+    ports:
+      - "4003:4003"
+    depends_on:
+      - sqlserver
+      - mongo
 
   pedidos:
     build: ./microservices/pedidos
     container_name: varu_pedidos
     ports:
-      - "3003:3003"
-    networks:
-      - varu_network
-    restart: always
-
-  # ---------- BFF ----------
-  bff:
-    build: ./bff
-    container_name: varu_bff
-    ports:
-      - "8080:8080"
+      - "4004:4004"
     depends_on:
-      - usuarios
-      - inventario
-      - pedidos
-      - functions
-    env_file:
-      - ./bff/.env
-    networks:
-      - varu_network
-    restart: always
+      - sqlserver
+      - mongo
 
-  # ---------- FUNCTIONS ----------
-  functions:
-    build: ./functions
-    container_name: varu_functions
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: varu_sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "YourStrong!Pass123"
     ports:
-      - "4000:4000"
-    networks:
-      - varu_network
-    restart: always
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
 
-  # ---------- FRONTEND ----------
-  frontend:
-    build: ./frontend
-    container_name: varu_frontend
+  mongo:
+    image: mongo:6
+    container_name: varu_mongo
     ports:
-      - "5173:5173"
-    depends_on:
-      - bff
-    networks:
-      - varu_network
-    restart: always
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
 
-networks:
-  varu_network:
-    driver: bridge
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: varu_rabbitmq
+    ports:
+      - "5672:5672"     # conexão AMQP dos microservices
+      - "15672:15672"   # painel de administração
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+
+volumes:
+  sql_data:
+  mongo_data:
