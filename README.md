@@ -1,85 +1,247 @@
-# 🌥️ VARU Cloud – Plataforma de Gestão de Estoque e Operações Distribuídas
+# VARU Cloud - Sistema de Gerenciamento de Estoque
 
-O **VARU Cloud** é uma plataforma moderna desenvolvida com **Clean Architecture**, **Vertical Slice**, **Event-Driven Architecture**, **Microservices**, **BFF**, **API Gateway**, e suporte completo via **Docker**.
+VARU (Virtual Automated Resource Utility) é um sistema abrangente de gerenciamento de estoque construído com arquitetura de microserviços moderna. Segue os princípios da Arquitetura Limpa combinada com a Arquitetura de Fatia Vertical para garantir manutenibilidade, testabilidade e escalabilidade.
 
-O sistema foi projetado para fornecer **gestão eficiente de estoque**, **controle de produtos**, **processamento de pedidos**, **monitoramento de inventário**, **autenticação de usuários**, e integração com **Azure Functions**.  
+## Índice
 
-Toda a solução é baseada em uma arquitetura distribuída, escalável e orientada a eventos.
+- [Visão Geral](#visão-geral)
+- [Arquitetura](#arquitetura)
+- [Stack de Tecnologia](#stack-de-tecnologia)
+- [Serviços](#serviços)
+- [Começando](#começando)
+- [Configuração do Banco de Dados](#configuração-do-banco-de-dados)
+- [Arquitetura Orientada a Eventos](#arquitetura-orientada-a-eventos)
+- [Funções Azure](#funções-azure)
+- [Testes](#testes)
+- [Frontend](#frontend)
+- [Contribuidores](#contribuidores)
 
----
+## Visão Geral
 
-## 👨‍💻 **Integrantes**
-- **Silvio Cezar**
-- **Lucas Bertoli**
-- **Murilo Carvalho**
-- **Enzo Alle**
-- **Guilherme Dias**
+VARU foi projetado para gerenciar estoque, pedidos e contas de usuários para empresas de todos os tamanhos. O sistema fornece rastreamento de estoque em tempo real, alertas automatizados para estoque baixo, processamento de pedidos e capacidades abrangentes de relatórios.
 
----
+Principais recursos incluem:
+- Gerenciamento de estoque em tempo real
+- Alertas automatizados de estoque baixo
+- Processamento e rastreamento de pedidos
+- Gerenciamento de usuários e acesso
+- Relatórios abrangentes
+- Arquitetura orientada a eventos
+- Implantação nativa em nuvem
 
-## 🔗 **Repositório Oficial**
-👉 GitHub: https://github.com/Silviojr13/varucloud
+## Arquitetura
 
-📄 *Todo o código-fonte, documentação e instruções completas para execução do projeto estão disponíveis no repositório acima.*
+O sistema segue os princípios da Arquitetura Limpa combinada com a Arquitetura de Fatia Vertical:
 
----
+### Arquitetura Limpa
 
-# 🏗️ Arquitetura do Projeto
+A arquitetura separa as preocupações em camadas distintas:
+1. **Camada de Domínio**: Entidades e regras de negócio
+2. **Camada de Aplicação**: Casos de uso e serviços de aplicação
+3. **Camada de Infraestrutura**: Implementação de serviços externos
+4. **Camada de Apresentação**: Controladores de UI e API
 
-O projeto segue uma arquitetura moderna e modular, organizada em camadas e microsserviços independentes.
+### Arquitetura de Fatia Vertical
 
-## 🔧 **Tecnologias Utilizadas**
-- **Node.js 20+**
-- **NestJS / Express**
-- **React + Vite (Frontend)**
-- **RabbitMQ (Event-Driven Architecture)**
-- **Azure Functions**
-- **SQL Server (Azure SQL Basic)**
-- **MongoDB (Atlas)**
-- **Docker + Docker Compose**
-- **Clean Architecture**
-- **Vertical Slice Architecture**
-- **Prisma ORM**
-- **Axios / Fetch**
-- **BFF Pattern**
-- **API Gateway Pattern**
+O código é organizado por recursos de negócio em vez de camadas técnicas:
+```
+src/
+└── features/
+    └── nome-do-recurso/
+        ├── controllers/
+        ├── models/
+        ├── services/
+        └── validators/
+```
 
----
+### Microserviços
 
-# 📦 Microsserviços do Sistema
+O sistema é composto por microserviços independentes:
+- **Serviço de Inventário**: Gerencia o estoque de produtos e níveis de estoque
+- **Serviço de Usuários**: Gerencia contas de usuários e autenticação
+- **Serviço de Pedidos**: Gerencia pedidos de clientes e processamento
+- **BFF (Backend para Frontend)**: Agrega APIs para o frontend
+- **Funções**: Funções serverless para processamento de eventos
 
-A plataforma é composta pelos seguintes serviços independentes:
+## Stack de Tecnologia
 
-### 🧍 **MS Usuários**
-Autenticação, autorização e gerenciamento de contas.
+### Backend
+- **Runtime**: Node.js
+- **Framework**: Express.js
+- **Banco de Dados**: 
+  - MongoDB Atlas (NoSQL para estoque)
+  - SQL Server (Azure) (Relacional para usuários/pedidos)
+- **ORM**: Prisma (para banco de dados SQL)
+- **Validação**: Zod
+- **Message Broker**: RabbitMQ
+- **Contêinerização**: Docker
+- **Orquestração**: Docker Compose
 
-### 📦 **MS Produtos**
-CRUD completo de produtos, categorias e informações do catálogo.
+### Frontend
+- **Framework**: JavaScript Vanilla com Vite
+- **Ferramenta de Build**: Vite
 
-### 🏪 **MS Inventário**
-Controle de estoque, movimentações, entradas e saídas.
+### Serviços em Nuvem
+- **Banco de Dados**: Azure SQL Database, MongoDB Atlas
+- **Serverless**: Azure Functions
+- **Mensageria**: RabbitMQ
+- **Registro de Contêineres**: Azure Container Registry (planejado)
+- **Implantação**: Azure App Service (planejado)
 
-### 🧾 **MS Pedidos**
-Processamento de pedidos, cálculos, regras de negócio e integração com estoque.
+## Serviços
 
-### 🌐 **API Gateway**
-Porta de entrada da plataforma.  
-Orquestra requests, roteamento e segurança.
+### Serviço de Inventário
+Gerencia o estoque de produtos com operações CRUD, rastreamento de estoque e datas de validade.
 
-### 🤝 **BFF (Backend for Frontend)**
-Camada intermediária focada no frontend para reduzir complexidade e melhorar performance.
+### Serviço de Usuários
+Lida com registro de usuários, autenticação e gerenciamento de contas usando Prisma ORM.
 
-### 🪝 **Azure Functions**
-Eventos assíncronos, processamento de mensagens e triggers serverless.
+### Serviço de Pedidos
+Gerencia pedidos de clientes, processamento e cumprimento.
 
-### 🐇 **RabbitMQ**
-Mensageria para comunicação desacoplada entre microsserviços.
+### BFF (Backend para Frontend)
+Agrega e expõe APIs para o frontend com documentação Swagger.
 
-### 💾 **SQL Server (Azure SQL)**
-Banco relacional para dados estruturados.
+### Funções
+Funções serverless para tarefas automatizadas e processamento de eventos.
 
-### 🗄️ **MongoDB (Atlas)**
-Banco NoSQL para documentos, logs e eventos.
+## Começando
 
----
+### Pré-requisitos
+- Node.js 16+
+- Docker e Docker Compose
+- Conta MongoDB Atlas
+- Azure SQL Database (ou equivalente local para desenvolvimento)
 
+### Instalação
+
+1. Clone o repositório:
+```bash
+git clone https://github.com/seu-usuario/varucloud.git
+cd varucloud
+```
+
+2. Instale as dependências para cada serviço:
+```bash
+cd microservices/inventario && npm install
+cd ../usuarios && npm install
+cd ../pedidos && npm install
+cd ../../bff && npm install
+cd ../frontend && npm install
+cd ../functions && npm install
+```
+
+3. Configure as variáveis de ambiente (veja a seção Configuração do Banco de Dados)
+
+4. Inicie todos os serviços usando Docker Compose:
+```bash
+docker-compose up --build
+```
+
+### Executando Serviços Individualmente
+
+Para executar serviços individualmente para desenvolvimento:
+
+```bash
+# Terminal 1: Serviço de Inventário
+cd microservices/inventario
+npm start
+
+# Terminal 2: Serviço de Usuários
+cd microservices/usuarios
+npm start
+
+# Terminal 3: Serviço de Pedidos
+cd microservices/pedidos
+npm start
+
+# Terminal 4: BFF
+cd bff
+npm start
+
+# Terminal 5: Frontend
+cd frontend
+npm start
+```
+
+## Configuração do Banco de Dados
+
+### MongoDB Atlas (Inventário)
+1. Crie um cluster MongoDB Atlas
+2. Crie um usuário de banco de dados
+3. Configure o acesso à rede
+4. Atualize o `MONGO_URI` em `microservices/inventario/.env`
+
+### Azure SQL Database (Usuários/Pedidos)
+1. Crie um Azure SQL Database
+2. Crie as tabelas necessárias (veja `docs/DATABASE_SETUP.md`)
+3. Atualize a string de conexão nos serviços
+
+Para instruções detalhadas de configuração do banco de dados, veja [DATABASE_SETUP.md](docs/DATABASE_SETUP.md).
+
+## Arquitetura Orientada a Eventos
+
+O sistema implementa uma Arquitetura Orientada a Eventos usando RabbitMQ para acoplamento fraco entre serviços.
+
+### Eventos
+- ProductCreated
+- ProductUpdated
+- ProductDeleted
+- StockLow
+- OrderCreated
+- OrderUpdated
+
+Para arquitetura de eventos detalhada, veja [EVENT_DRIVEN_ARCHITECTURE.md](docs/EVENT_DRIVEN_ARCHITECTURE.md).
+
+## Funções Azure
+
+Funções serverless lidam com tarefas automatizadas:
+- Alertas de reposição de estoque
+- Relatórios diários de estoque
+- Confirmações de pedidos
+
+Para implementação detalhada das Funções Azure, veja [AZURE_FUNCTIONS.md](docs/AZURE_FUNCTIONS.md).
+
+## Testes
+
+### Testes Unitários
+Execute testes unitários com:
+```bash
+npm test
+```
+
+### Testes Arquiteturais
+O sistema inclui testes para verificar a conformidade com a Arquitetura Limpa e a separação adequada de camadas.
+
+### Testes de Integração
+Testes de integração verificam a comunicação entre serviços e fluxos de trabalho de ponta a ponta.
+
+## Frontend
+
+O frontend é uma aplicação web responsiva construída com JavaScript vanilla e Vite. Ele fornece:
+
+- Gerenciamento de estoque em tempo real
+- Autenticação de usuários
+- Processamento de pedidos
+- Painel de relatórios
+
+Para executar o frontend:
+```bash
+cd frontend
+npm install
+npm start
+```
+
+Acesse a aplicação em `http://localhost:5173`
+
+## Documentação da API
+
+A documentação da API está disponível através do Swagger em `http://localhost:8080/docs` quando o BFF está em execução.
+
+## Contribuidores
+
+- [Seu Nome](https://github.com/seu-usuario)
+
+## Licença
+
+Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.

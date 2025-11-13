@@ -1,30 +1,30 @@
-# Database Setup Guide
+# Guia de Configuração do Banco de Dados
 
-## Overview
+## Visão Geral
 
-The VARU system uses two types of databases:
+O sistema VARU utiliza dois tipos de bancos de dados:
 
-1. **SQL Server (Azure)** - For relational data (users, orders, suppliers, customers)
-2. **MongoDB Atlas** - For non-relational data (inventory items, logs, events, cache)
+1. **SQL Server (Azure)** - Para dados relacionais (usuários, pedidos, fornecedores, clientes)
+2. **MongoDB Atlas** - Para dados não relacionais (itens de estoque, logs, eventos, cache)
 
-## SQL Server (Azure) Setup
+## Configuração do SQL Server (Azure)
 
-### 1. Create an Azure SQL Database
+### 1. Criar um Banco de Dados SQL Azure
 
-1. Log in to the Azure Portal
-2. Create a new SQL Database resource
-3. Configure the database with appropriate settings:
-   - Server: Create a new server or use existing
-   - Database name: `varucloud`
-   - Compute + storage: Standard tier or higher
-4. Configure firewall rules to allow connections from your services
+1. Faça login no Portal Azure
+2. Crie um novo recurso de Banco de Dados SQL
+3. Configure o banco de dados com configurações apropriadas:
+   - Servidor: Crie um novo servidor ou use um existente
+   - Nome do banco de dados: `varucloud`
+   - Computação + armazenamento: Tier padrão ou superior
+4. Configure as regras de firewall para permitir conexões dos seus serviços
 
-### 2. Database Schema
+### 2. Esquema do Banco de Dados
 
-The database should include the following tables:
+O banco de dados deve incluir as seguintes tabelas:
 
 ```sql
--- Users table
+-- Tabela de Usuários
 CREATE TABLE Users (
     Id UNIQUEIDENTIFIER PRIMARY KEY,
     Name NVARCHAR(100) NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE Users (
     CreatedAt DATETIME2 DEFAULT GETUTCDATE()
 );
 
--- Suppliers table
+-- Tabela de Fornecedores
 CREATE TABLE Suppliers (
     Id UNIQUEIDENTIFIER PRIMARY KEY,
     Name NVARCHAR(100) NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE Suppliers (
     CreatedAt DATETIME2 DEFAULT GETUTCDATE()
 );
 
--- Customers table
+-- Tabela de Clientes
 CREATE TABLE Customers (
     Id UNIQUEIDENTIFIER PRIMARY KEY,
     Name NVARCHAR(100) NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE Customers (
     CreatedAt DATETIME2 DEFAULT GETUTCDATE()
 );
 
--- Orders table
+-- Tabela de Pedidos
 CREATE TABLE Orders (
     Id UNIQUEIDENTIFIER PRIMARY KEY,
     CustomerId UNIQUEIDENTIFIER NOT NULL,
@@ -63,7 +63,7 @@ CREATE TABLE Orders (
     FOREIGN KEY (CustomerId) REFERENCES Customers(Id)
 );
 
--- OrderItems table
+-- Tabela de Itens do Pedido
 CREATE TABLE OrderItems (
     Id UNIQUEIDENTIFIER PRIMARY KEY,
     OrderId UNIQUEIDENTIFIER NOT NULL,
@@ -74,68 +74,68 @@ CREATE TABLE OrderItems (
 );
 ```
 
-### 3. Connection Configuration
+### 3. Configuração de Conexão
 
-Update the connection string in your services:
-
-```
-Server=your-server.database.windows.net;Database=varucloud;User Id=your-username;Password=your-password;Encrypt=true;
-```
-
-## MongoDB Atlas Setup
-
-### 1. Create a MongoDB Atlas Cluster
-
-1. Sign up for MongoDB Atlas at https://www.mongodb.com/cloud/atlas
-2. Create a new cluster with the free tier (M0) or higher
-3. Configure network access to allow connections from your services
-4. Create a database user with appropriate permissions
-
-### 2. Database Schema
-
-MongoDB collections:
-
-1. **Items** - Inventory items
-2. **Logs** - System logs
-3. **Events** - Business events
-4. **Cache** - Cached data
-
-### 3. Connection Configuration
-
-Update the MongoDB connection string in your services:
+Atualize a string de conexão nos seus serviços:
 
 ```
-mongodb+srv://username:password@cluster.mongodb.net/database?retryWrites=true&w=majority
+Server=seu-servidor.database.windows.net;Database=varucloud;User Id=seu-usuario;Password=sua-senha;Encrypt=true;
 ```
 
-## Environment Variables
+## Configuração do MongoDB Atlas
 
-Set the following environment variables in each service:
+### 1. Criar um Cluster MongoDB Atlas
 
-### Inventory Service (.env)
+1. Registre-se no MongoDB Atlas em https://www.mongodb.com/cloud/atlas
+2. Crie um novo cluster com o tier gratuito (M0) ou superior
+3. Configure o acesso à rede para permitir conexões dos seus serviços
+4. Crie um usuário de banco de dados com permissões apropriadas
+
+### 2. Esquema do Banco de Dados
+
+Coleções MongoDB:
+
+1. **Items** - Itens de estoque
+2. **Logs** - Logs do sistema
+3. **Events** - Eventos de negócio
+4. **Cache** - Dados em cache
+
+### 3. Configuração de Conexão
+
+Atualize a string de conexão do MongoDB nos seus serviços:
+
 ```
-MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/varucloud?retryWrites=true&w=majority
+mongodb+srv://usuario:senha@cluster.mongodb.net/banco-de-dados?retryWrites=true&w=majority
+```
+
+## Variáveis de Ambiente
+
+Defina as seguintes variáveis de ambiente em cada serviço:
+
+### Serviço de Inventário (.env)
+```
+MONGO_URI=mongodb+srv://usuario:senha@cluster.mongodb.net/varucloud?retryWrites=true&w=majority
 PORT=3001
 ```
 
-### Users Service (.env)
+### Serviço de Usuários (.env)
 ```
-TURSO_DATABASE_URL=libsql://your-database.turso.io
-TURSO_AUTH_TOKEN=your-auth-token
+TURSO_DATABASE_URL=libsql://seu-banco-de-dados.turso.io
+TURSO_AUTH_TOKEN=seu-token-de-autenticacao
 PORT=3002
 ```
 
-### Orders Service (.env)
+### Serviço de Pedidos (.env)
 ```
-SQL_SERVER_CONNECTION_STRING=Server=your-server.database.windows.net;Database=varucloud;User Id=your-username;Password=your-password;Encrypt=true;
+SQL_SERVER_CONNECTION_STRING=Server=seu-servidor.database.windows.net;Database=varucloud;User Id=seu-usuario;Password=sua-senha;Encrypt=true;
 PORT=3003
 ```
 
-## Testing Database Connections
+## Testando Conexões com Bancos de Dados
 
-To test your database connections:
+Para testar suas conexões com bancos de dados:
 
-1. Ensure all environment variables are set correctly
-2. Run each service individually to verify database connectivity
-3. Check the service logs for any connection errors
-4. Use database management tools to verify data access
+1. Certifique-se de que todas as variáveis de ambiente estão configuradas corretamente
+2. Execute cada serviço individualmente para verificar a conectividade com o banco de dados
+3. Verifique os logs do serviço para quaisquer erros de conexão
+4. Use ferramentas de gerenciamento de banco de dados para verificar o acesso aos dados

@@ -1,4 +1,5 @@
 import Item from '../models/Item.js';
+import eventPublisher from '../../../events/eventPublisher.js';
 
 class ItemService {
   async getAllItems() {
@@ -30,7 +31,25 @@ class ItemService {
       }
       
       const item = new Item(itemData);
-      return await item.save();
+      const savedItem = await item.save();
+      
+      // Publish event
+      const event = {
+        type: 'ProductCreated',
+        payload: {
+          id: savedItem._id,
+          nome: savedItem.nome,
+          sku: savedItem.sku,
+          quantidade: savedItem.quantidade,
+          preco: savedItem.preco,
+          validade: savedItem.validade
+        },
+        timestamp: new Date().toISOString()
+      };
+      
+      await eventPublisher.publish('varu.events', 'inventory.product.created', event);
+      
+      return savedItem;
     } catch (error) {
       throw new Error(`Failed to create item: ${error.message}`);
     }
@@ -48,6 +67,22 @@ class ItemService {
         throw new Error('Item not found');
       }
       
+      // Publish event
+      const event = {
+        type: 'ProductUpdated',
+        payload: {
+          id: item._id,
+          nome: item.nome,
+          sku: item.sku,
+          quantidade: item.quantidade,
+          preco: item.preco,
+          validade: item.validade
+        },
+        timestamp: new Date().toISOString()
+      };
+      
+      await eventPublisher.publish('varu.events', 'inventory.product.updated', event);
+      
       return item;
     } catch (error) {
       throw new Error(`Failed to update item: ${error.message}`);
@@ -61,6 +96,19 @@ class ItemService {
       if (!item) {
         throw new Error('Item not found');
       }
+      
+      // Publish event
+      const event = {
+        type: 'ProductDeleted',
+        payload: {
+          id: item._id,
+          nome: item.nome,
+          sku: item.sku
+        },
+        timestamp: new Date().toISOString()
+      };
+      
+      await eventPublisher.publish('varu.events', 'inventory.product.deleted', event);
       
       return { message: 'Item deleted successfully' };
     } catch (error) {
